@@ -48,7 +48,6 @@ inline bool parseTja(const std::string& source, Chart& chart) {
     chart = Chart{};
     bool inChart = false;
     int tick = 0;
-    int measure = 0;
     std::string line;
     std::size_t pos = 0;
 
@@ -79,7 +78,6 @@ inline bool parseTja(const std::string& source, Chart& chart) {
         if (command == "#START" || command.find("#START ") == 0) {
             inChart = true;
             tick = 0;
-            measure = 0;
             continue;
         }
         if (!inChart) continue;
@@ -87,7 +85,7 @@ inline bool parseTja(const std::string& source, Chart& chart) {
         if (command[0] == '#') {
             // #MEASURE is supported as a timing boundary; other commands are
             // not interpreted by this first parser version.
-            if (command == "#MEASURE") ++measure;
+            if (command == "#MEASURE") { /* measure boundary */ }
             else if (command.find("#BPMCHANGE") == 0 ||
                      command.find("#SCROLL") == 0 ||
                      command.find("#DELAY") == 0) {
