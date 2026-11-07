@@ -1,47 +1,63 @@
 # Taiko2Switch
 
-A Nintendo Switch homebrew TJA rhythm-game player.
+Nintendo Switch homebrew TJA rhythm-game player project, with a companion desktop audio-to-TJA draft generator.
 
-## Build
+## Current implementation
 
-The repository is configured to build automatically with GitHub Actions.
+- libnx application entry point and SD card mounting
+- SD card song-folder scanner and basic TJA metadata browser
+- Initial TJA header/note parser (common single-chart format)
+- Folder-based default skin manifest (runtime skin switching is not implemented yet)
+- Desktop GUI that analyzes an audio file and creates an editable TJA draft plus a song folder
+- GitHub Actions NRO build
 
-1. Open the **Actions** tab.
-2. Select **Nintendo Switch Build**.
-3. Select **Run workflow**, or push a commit to `main`.
-4. Download the `Taiko2Switch-NRO` artifact from a successful run.
+This is an early porting milestone, **not yet a complete playable Taiko game**. Audio playback, note rendering, timing/judgement, result screen, score persistence, course selection, and skin rendering still need implementation. TJA branch charts and timing/scroll gimmicks are currently rejected by the parser instead of being silently misread.
 
-The build uses the official devkitPro `devkitpro/devkita64` container and produces `Taiko2Switch.nro`.
+## SD card layout
 
-## Install
-
-Copy the generated NRO to:
+Copy the NRO to:
 
 ```text
 sd:/switch/Taiko2Switch/Taiko2Switch.nro
 ```
 
-This initial bootstrap build only verifies the Homebrew application startup. It does not yet play TJA charts.
+Put songs here:
 
-## Planned modules
+```text
+sd:/switch/Taiko2Switch/songs/<Song Folder>/<Song>.tja
+sd:/switch/Taiko2Switch/songs/<Song Folder>/<Audio File>
+```
 
-- TJA parser and chart model
-- Audio playback and audio-clock-based timing
-- Note renderer and judgement engine
-- Joy-Con / standard controller input
-- USB drum input compatibility layer
-- Song browser, results, settings and score persistence
+The TJA `WAVE:` value must match the audio filename. The first TJA found in each song folder is listed.
 
-## USB drum support
+## Desktop audio-to-TJA generator
 
-USB and Bluetooth controller compatibility are separate concerns. The application will first use the normal Switch controller-input API for devices exposed to the system as controllers. A model-specific USB input backend may be needed if the drum is not exposed through the standard controller interface.
+Requirements: Python 3.10+ recommended.
 
-## Development status
+```powershell
+py -m pip install -r tools/requirements.txt
+py tools/tja_autogen.py
+```
 
-- [x] GitHub Actions build pipeline
-- [x] Initial libnx application entry point
-- [ ] TJA parser
-- [ ] Audio engine
-- [ ] Gameplay and judgement
-- [ ] Song browser and score saving
-- [ ] USB drum model validation
+Choose an audio file, choose a difficulty from 1–10, and generate. The tool creates a folder containing the copied audio and a TJA file. It uses onset detection and beat estimation to make a **draft**, not a guaranteed accurate transcription. Review the BPM, offset, note placements, and difficulty before distributing or playing it.
+
+## Skins
+
+Skin folders live under `skins/`. Each skin currently has a `skin.ini` manifest. The default manifest is a starting point for the upcoming renderer and skin selector; it is not yet loaded by the Switch UI.
+
+## Build
+
+GitHub Actions builds `Taiko2Switch.nro` on pushes to `main` and via manual workflow dispatch. Open the Actions tab and download the `Taiko2Switch-NRO` artifact from a successful run.
+
+## Controller status
+
+Joy-Con/standard controller navigation currently uses libnx HID. Gameplay drum mapping is not implemented yet. The exact older PS4 drum model still needs identification and USB protocol testing. MissionControl is for Bluetooth devices; it is not a generic USB-drum driver. sys-con may help with some USB devices, but compatibility must be confirmed per model.
+
+## Planned work
+
+1. Audio decoder/mixer and audio-clock timing
+2. TJA gameplay parser expansion, note lane renderer, judgement and results
+3. Course/difficulty selection and persistent scores
+4. Runtime skin loading and skin selector
+5. Joy-Con and USB drum gameplay mapping
+6. TJA format compatibility tests and broader chart support
