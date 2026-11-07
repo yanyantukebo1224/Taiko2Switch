@@ -15,6 +15,7 @@ struct SongEntry {
 
 std::vector<SongEntry> songs;
 int selected = 0;
+int firstVisible = 0;
 std::string status = "Create /switch/Taiko2Switch/songs/ on the SD card.";
 
 bool readFile(const std::string& path, std::string& out) {
@@ -63,6 +64,7 @@ void scanSongs() {
     status = songs.empty() ? "No TJA files found." :
         "Loaded " + std::to_string(songs.size()) + " song folder(s).";
     if (selected >= static_cast<int>(songs.size())) selected = 0;
+    if (firstVisible > selected) firstVisible = selected;
 }
 
 void draw() {
