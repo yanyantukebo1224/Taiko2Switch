@@ -1,0 +1,38 @@
+name: Nintendo Switch Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-switch:
+    name: Build Taiko2Switch NRO
+    runs-on: ubuntu-latest
+    container:
+      image: devkitpro/devkita64:latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build
+        run: make -j2
+
+      - name: Stage artifact
+        run: |
+          mkdir -p dist
+          test -f Taiko2Switch.nro
+          cp Taiko2Switch.nro dist/
+
+      - name: Upload NRO
+        uses: actions/upload-artifact@v4
+        with:
+          name: Taiko2Switch-NRO
+          path: dist/Taiko2Switch.nro
+          if-no-files-found: error
+          retention-days: 14
