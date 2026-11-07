@@ -13,6 +13,9 @@ permissions:
 jobs:
   build-switch:
     name: Build for Switch
+    defaults:
+      run:
+        working-directory: vendor/YataiDON
     runs-on: ubuntu-24.04
     timeout-minutes: 180
     container:
