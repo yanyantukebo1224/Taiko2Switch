@@ -1,0 +1,3 @@
+[submodule "vendor/YataiDON"]
+	path = vendor/YataiDON
+	url = https://github.com/Yonokid/YataiDON.git
