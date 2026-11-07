@@ -47,8 +47,7 @@ def make_tja(audio_path: str, difficulty: int, output_root: str) -> str:
         step = max(0, int(round(float(seconds) / step_seconds)))
         if step - last_step < min_gap:
             continue
-        frame = min(len(centroid) - 1, max(0, int(round(float(seconds) * sr / hop)))
-        )
+        frame = min(len(centroid) - 1, max(0, int(round(float(seconds) * sr / hop))))
         note = "2" if centroid[frame] > median_centroid else "1"
         if difficulty >= 7 and rms[min(frame, len(rms)-1)] > loud_cut:
             note = "4" if note == "2" else "3"
