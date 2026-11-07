@@ -2,7 +2,7 @@ name: Build Taiko2Switch (YataiDON Switch port)
 
 on:
   push:
-    branches: [main]
+    branches: [main, yataireswitch-port]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -31,6 +31,11 @@ jobs:
       BUILD_JOBS: 4
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
       - name: Install dependencies
         run: |
           apt-get update
@@ -42,11 +47,6 @@ jobs:
             python3-pip python3-setuptools python3-wheel \
             libgl-dev libx11-dev
           pip3 install --break-system-packages --no-cache-dir meson mako pyyaml packaging
-
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
 
       - name: Restore mesa-switch SDK
         id: cache-mesa
