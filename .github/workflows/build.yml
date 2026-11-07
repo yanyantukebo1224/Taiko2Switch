@@ -11,6 +11,16 @@ permissions:
   contents: read
 
 jobs:
+  test-tja-parser:
+    name: Test TJA parser (host)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile parser tests
+        run: g++ -std=c++17 -Wall -Wextra -Werror -Iinclude tests/tja_parser_test.cpp -o tja-parser-test
+      - name: Run parser tests
+        run: ./tja-parser-test
+
   validate-generator:
     name: Validate desktop generator
     runs-on: ubuntu-latest
